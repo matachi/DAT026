@@ -6,7 +6,7 @@ public class Main {
 	
 	private Random random;
 	private static double[] answer = {57.9, 108.2, 149.6, 228.07, 778.434, 1428.74, 2839.08, 4490.8, 5879.13};
-	private static double[] vertices = {88.0, 224.7, 365.3, 687.0, 4332, 10760, 30684, 90467};
+	private static double[] vertices = {88.0, 224.7, 365.3, 687.0, 4332, 10760, 30684, 60188, 90467};
 	
 	private static double diff(double a, double b, double c) {
 		double diff = 0;
@@ -24,13 +24,9 @@ public class Main {
 		random = new Random(System.currentTimeMillis());
 		PriorityQueue<Neuron> neurons = new PriorityQueue<Neuron>();
 		for (int i = 0; i < 33; ++i) {
-			neurons.add(new Neuron(1, 1, 1));
+			neurons.add(new Neuron(1800, 1, 1));
 		}
-//		for (int i = 0; i < 33; ++i) {
-//			System.out.println(neurons.poll());
-//		}
 		
-		Long time;
 		while (true) {
 			Neuron a = neurons.poll();
 			Neuron b = neurons.poll();
@@ -40,14 +36,11 @@ public class Main {
 			neurons.add(a);
 			neurons.add(b);
 			neurons.add(c);
-			time = System.currentTimeMillis();
 			for (int i = 0; i < 10; ++i) {
 				neurons.add(new Neuron(a));
 				neurons.add(new Neuron(b));
 				neurons.add(new Neuron(c));
 			}
-//			while (time + 100 > System.currentTimeMillis())
-//				;
 		}
 	}
 	
@@ -71,19 +64,13 @@ public class Main {
 		private double randomNumber(double d) {
 			double r = random.nextDouble();
 			if (r < 0.1) {
-				d *= 1.1;
+				d *= 1.01;
 			} else if (r < 0.2) {
-				d *= 0.9;
-			} else if (r < 0.3) {
-				d *= 2;
-			} else if (r < 0.4) {
-				d *= 0.5;
+				d *= 0.99;
 			} else if (r < 0.5) {
-				d += 0.1;
-			} else if (r < 0.6) {
-				d -= 0.1;
-			} else if (r < 0.7) {
-				d -= 2 * d - random.nextDouble() * 2 * d;
+				d = 1.4 * d - random.nextDouble() * 0.8 * d;
+			} else if (r < 0.9) {
+				d = 2 * d - random.nextDouble() * 2 * d;
 			}
 			return d;
 		}
@@ -93,8 +80,7 @@ public class Main {
 		}
 		@Override
 		public String toString() {
-			return sum + " ... " + a + "*ln(" + b + "x+" + c + ")";
-//			return a + "*ln(" + b + "x+" + c + ")";
+			return a + "*ln(" + b + "x+" + c + ")";
 		}
 	}
 }

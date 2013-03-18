@@ -24,7 +24,7 @@ public class Main {
 		random = new Random(System.currentTimeMillis());
 		PriorityQueue<Neuron> neurons = new PriorityQueue<Neuron>();
 		for (int i = 0; i < 33; ++i) {
-			neurons.add(new Neuron(1800, 1, 1));
+			neurons.add(new Neuron(1, 1, 1));
 		}
 		
 		while (true) {

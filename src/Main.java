@@ -12,9 +12,9 @@ public class Main {
 		double diff = 0;
 		for (int i = 0; i < vertices.length; ++i) {
 			// To find using a*ln(b*x+c)
-			//diff += Math.pow(answer[i] - a * Math.log(b * vertices[i] + c), 2);
-			// a*x^2 + b*x + c
-			diff += Math.pow(answer[i] - (a * Math.pow(vertices[i], 2) + b * vertices[i] + c), 2);
+			diff += Math.pow(answer[i] - a * Math.log(b * vertices[i] + c), 2);
+			// change to following statement to use a*x^2 + b*x + c instead:
+			//diff += Math.pow(answer[i] - (a * Math.pow(vertices[i], 2) + b * vertices[i] + c), 2);
 		}
 		return diff;
 	}
@@ -31,14 +31,19 @@ public class Main {
 		}
 		
 		while (true) {
+			// Pick the 3 best neurons
 			Neuron a = neurons.poll();
 			Neuron b = neurons.poll();
 			Neuron c = neurons.poll();
+			// Print the very best
 			System.out.println(a);
+			// Clear the priority queue
 			neurons.clear();
+			// Add the 3 best to the queue
 			neurons.add(a);
 			neurons.add(b);
 			neurons.add(c);
+			// Add 30 new neurons based on the previous 3 best
 			for (int i = 0; i < 10; ++i) {
 				neurons.add(new Neuron(a));
 				neurons.add(new Neuron(b));
@@ -48,9 +53,11 @@ public class Main {
 	}
 	
 	private class Neuron implements Comparable<Neuron> {
+		// The three constants
 		double a;
 		double b;
 		double c;
+		// A equations having better constants will a lower sum
 		Double sum;
 		public Neuron(double a, double b, double c) {
 			this.a = a;
@@ -59,6 +66,7 @@ public class Main {
 			sum = diff(a, b, c);
 		}
 		public Neuron(Neuron n) {
+			// Create a new neuron based on a previous one with some mutations
 			a = randomNumber(n.a);
 			b = randomNumber(n.b);
 			c = randomNumber(n.c);
@@ -83,6 +91,8 @@ public class Main {
 		}
 		@Override
 		public String toString() {
+			// This will need to be updated depending on the equation used in
+			// method diff.
 			return a + "*ln(" + b + "x+" + c + ")";
 		}
 	}

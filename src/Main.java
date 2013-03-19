@@ -26,6 +26,7 @@ public class Main {
 	public Main() {
 		random = new Random(System.currentTimeMillis());
 		PriorityQueue<Neuron> neurons = new PriorityQueue<Neuron>();
+		// Fill the priority queue with 33 default neurons
 		for (int i = 0; i < 33; ++i) {
 			neurons.add(new Neuron(1, 1, 1));
 		}
@@ -39,7 +40,7 @@ public class Main {
 			System.out.println(a);
 			// Clear the priority queue
 			neurons.clear();
-			// Add the 3 best to the queue
+			// Readd the 3 best to the queue
 			neurons.add(a);
 			neurons.add(b);
 			neurons.add(c);
@@ -57,7 +58,7 @@ public class Main {
 		double a;
 		double b;
 		double c;
-		// A equations having better constants will a lower sum
+		// A equations having better constants will have a lower sum
 		Double sum;
 		public Neuron(double a, double b, double c) {
 			this.a = a;

@@ -11,7 +11,10 @@ public class Main {
 	private static double diff(double a, double b, double c) {
 		double diff = 0;
 		for (int i = 0; i < vertices.length; ++i) {
-			diff += Math.pow(answer[i] - a * Math.log(b * vertices[i] + c), 2);
+			// To find using a*ln(b*x+c)
+			//diff += Math.pow(answer[i] - a * Math.log(b * vertices[i] + c), 2);
+			// a*x^2 + b*x + c
+			diff += Math.pow(answer[i] - (a * Math.pow(vertices[i], 2) + b * vertices[i] + c), 2);
 		}
 		return diff;
 	}
@@ -70,7 +73,7 @@ public class Main {
 			} else if (r < 0.5) {
 				d = 1.4 * d - random.nextDouble() * 0.8 * d;
 			} else if (r < 0.9) {
-				d = 2 * d - random.nextDouble() * 2 * d;
+				d = 2 * d - random.nextDouble() * 4 * d;
 			}
 			return d;
 		}

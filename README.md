@@ -1,6 +1,8 @@
 DAT026, Mathematical modelling and problem solving
 ==================================================
 
+Group 0
+
 Daniel Jonsson, IT, Chalmers  
 Florian Minges, IT, Chalmers
 

@@ -1,4 +1,4 @@
-bin/
+find-constants/bin/
 *.swp
 .settings/
 .~lock*

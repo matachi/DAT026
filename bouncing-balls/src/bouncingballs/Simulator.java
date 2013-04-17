@@ -34,7 +34,7 @@ public class Simulator implements ApplicationListener {
 		
 		// Draw borders
 		shapeRenderer.begin(ShapeType.FilledRectangle);
-		shapeRenderer.setColor(new Color(0, 0, 0, 1));
+		shapeRenderer.setColor(Color.BLACK);
 		// Left border
 		shapeRenderer.filledRect(-Constants.WIDTH / 2 - 20, -Constants.HEIGHT / 2 - 20, 20, Constants.HEIGHT + 40);
 		// Top border

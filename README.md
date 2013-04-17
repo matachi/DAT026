@@ -8,6 +8,8 @@ Florian Minges, IT, Chalmers
 
 ## Folders
 
-* **find-constants**: Module 1, find constants for functions to fit them to a
-  set of coordinates
+* **find-constants**: Module 1 exercise 2, find constants for functions to fit
+  them to a set of coordinates.
 
+* **bouncing-balls**: Module 3 exercise 2, implement a 2D bouncing balls
+  program.

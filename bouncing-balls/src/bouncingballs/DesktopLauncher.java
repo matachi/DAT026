@@ -10,6 +10,8 @@ public class DesktopLauncher {
 		cfg.useGL20 = false;
 		cfg.width = Constants.WIDTH + 40;
 		cfg.height = Constants.HEIGHT + 40;
+//		cfg.width = Constants.WIDTH/5;
+//		cfg.height = Constants.HEIGHT/5;
 		
 		new LwjglApplication(new Simulator(), cfg);
 	}

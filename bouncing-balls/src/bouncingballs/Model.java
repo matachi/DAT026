@@ -58,10 +58,27 @@ public class Model {
 					float R = velocity2.len() - velocity1.len();
 					float newVelocity1 = (I - weight2 * R) / (weight1 + weight2);
 					float newVelocity2 = R + newVelocity1;
+					
+					System.out.println("Angle (collision): " + angle + "\n" +
+							"Weight (1): " + weight1 + "\n" +
+							"Weight (2): " + weight2 + "\n" +
+							"I: " + I + "\n" +
+							"R: " + R + "\n" +
+							"v1: " + velocity1.len() + "\n" +
+							"v2: " + velocity2.len() + "\n" +
+							"Angle before (1): " + ball1.getVelocity().angle() + "\n" +
+							"Angle before (2): " + ball2.getVelocity().angle() + "\n" +
+							"u1: " + newVelocity1 + "\n" +
+							"u2: " + newVelocity2
+							);
 					ball1.getVelocity().x = newVelocity1 * (float) Math.cos(angle);
 					ball1.getVelocity().y = newVelocity1 * (float) Math.sin(angle);
 					ball2.getVelocity().x = newVelocity2 * (float) Math.cos(angle);
 					ball2.getVelocity().y = newVelocity2 * (float) Math.sin(angle);
+					System.out.println(
+							"Angle after (1): " + ball1.getVelocity().angle() + "\n" +
+							"Angle after (2): " + ball2.getVelocity().angle() + "\n"
+							);
 				}
 				checkedBalls.put(ball2, ball1);
 			}

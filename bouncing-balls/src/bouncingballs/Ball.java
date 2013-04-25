@@ -24,7 +24,7 @@ public class Ball {
 		position = new Vector2(x, y);
 		velocity = new Vector2();
 		this.color = color;
-		this.radius = radius;
+		this.radius = Math.abs(radius);
 		this.weight = weight;
 	}
 	
@@ -40,10 +40,16 @@ public class Ball {
 	public Vector2 getVelocity() {
 		return velocity;
 	}
+	public void setVelocity(Vector2 velocity) {
+		this.velocity = velocity;
+	}
 	public Color getColor() {
 		return color;
 	}
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	public boolean collidesWith(Ball ball) {
+		return position.dst(ball.position) < radius + ball.radius;
 	}
 }

@@ -33,7 +33,10 @@ public class Simulator implements ApplicationListener, InputProcessor {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		// Update the model
-		model.update(0.015f);
+		// It's possible to get the delta time with Gdx.graphics.getDeltaTime().
+		// But we saw that it runs better with a delta that doesn't change
+		// between updates.
+		model.update(1.0f/60); 
 		
 		// Draw background for the ball area
 		shapeRenderer.begin(ShapeType.FilledRectangle);

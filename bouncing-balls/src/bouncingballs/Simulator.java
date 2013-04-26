@@ -33,7 +33,7 @@ public class Simulator implements ApplicationListener, InputProcessor {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		// Update the model
-		model.update(Gdx.graphics.getDeltaTime());
+		model.update(0.015f);
 		
 		// Draw borders
 		shapeRenderer.begin(ShapeType.FilledRectangle);

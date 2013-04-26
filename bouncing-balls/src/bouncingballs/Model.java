@@ -8,30 +8,29 @@ import java.util.Map;
 import com.badlogic.gdx.math.Vector2;
 
 public class Model {
-	
+
 	private Collection<Ball> balls;
-	
+
 	public Model() {
 		balls = new HashSet<Ball>();
 		Ball ball = new Ball(0, 0, 100, 70);
-		ball.setVelocity(new Vector2(0, 0));
 		balls.add(ball);
-		ball = new Ball(250, 120, 100, 20);
+		ball = new Ball(250, 120, 50, 20);
 		ball.setVelocity(new Vector2(-500, 10));
 		balls.add(ball);
-//		ball = new Ball(-250, 120, 100, 20);
-//		ball.setVelocity(new Vector2(-500, 10));
-//		balls.add(ball);
+		ball = new Ball(-250, 120, 100, 70);
+		ball.setVelocity(new Vector2(-500, 10));
+		balls.add(ball);
 	}
-	
+
 	public void update(float delta) {
 		// Update all balls positions
 		for (Ball ball : balls) {
-//			ball.getVelocity().y -= Constants.GRAVITY * delta;
+			ball.getVelocity().y -= Constants.GRAVITY * delta;
 			ball.getPosition().x += ball.getVelocity().x * delta;
 			ball.getPosition().y += ball.getVelocity().y * delta;
 		}
-		
+
 		// Keep track of which balls collision have already been checked between
 		Map<Ball, Ball> checkedBalls = new HashMap<Ball, Ball>();
 		// Solve all collisions between balls
@@ -47,38 +46,58 @@ public class Model {
 				}
 				if (ball1.collidesWith(ball2)) {
 					// http://www.cse.chalmers.se/edu/year/2010/course/DAT026/CourseMaterial/lecture5.txt
-					Vector2 velocity1 = ball1.getVelocity();
-					Vector2 velocity2 = ball2.getVelocity();
+					/*
+					 * 1) calculate the degree of the plane
+					 * 2) convert the balls velocity to the new plane
+					 * 3) handle collision (only x-velocity)
+					 * 4) convert the new velocity back to the normal plane system
+					 * 5) update balls position and velocity
+					 */
+
+					// 1)
+					System.out.println(
+							"Angle before (1): " + ball1.getVelocity().angle() + "\n" +
+									"Angle before (2): " + ball2.getVelocity().angle()
+							);
 					Vector2 position1 = ball1.getPosition();
 					Vector2 position2 = ball2.getPosition();
-					float angle = (float) Math.atan((position1.y - position2.y) / (position1.x - position2.x));
+					// rotation = how much the new x axis is rotated from the normal x axis
+					double rotation = Math.atan((position1.y - position2.y) / (position1.x - position2.x));
+					if (position2.x > position1.x) {
+						rotation = Math.PI + rotation;
+					}
+					// 2)
+					/* 
+					 * alfa = 90 - rotation
+					 * beta = -rotation
+					 * newX = oldY*cos(alfa)+oldX*cos(beta)
+					 * newY = oldY*sin(alfa)+oldX*sin(beta)
+					 */
+
+					Vector2 oldVelocity1 = ball1.getVelocity();
+					Vector2 oldVelocity2 = ball2.getVelocity();
+					Vector2 newVelocity1 = getVectorNewPlane(oldVelocity1, rotation);
+					Vector2 newVelocity2 = getVectorNewPlane(oldVelocity2, rotation);
+
 					float weight1 = ball1.getWeight();
 					float weight2 = ball2.getWeight();
-					float I = velocity1.len() * weight1 + velocity2.len() * weight2;
-					float R = velocity2.len() - velocity1.len();
-					float newVelocity1 = (I - weight2 * R) / (weight1 + weight2);
-					float newVelocity2 = R + newVelocity1;
-					
-					System.out.println("Angle (collision): " + angle + "\n" +
-							"Weight (1): " + weight1 + "\n" +
-							"Weight (2): " + weight2 + "\n" +
-							"I: " + I + "\n" +
-							"R: " + R + "\n" +
-							"v1: " + velocity1.len() + "\n" +
-							"v2: " + velocity2.len() + "\n" +
-							"Angle before (1): " + ball1.getVelocity().angle() + "\n" +
-							"Angle before (2): " + ball2.getVelocity().angle() + "\n" +
-							"u1: " + newVelocity1 + "\n" +
-							"u2: " + newVelocity2
-							);
-					ball1.getVelocity().x = newVelocity1 * (float) Math.cos(angle);
-					ball1.getVelocity().y = newVelocity1 * (float) Math.sin(angle);
-					ball2.getVelocity().x = newVelocity2 * (float) Math.cos(angle);
-					ball2.getVelocity().y = newVelocity2 * (float) Math.sin(angle);
-					System.out.println(
-							"Angle after (1): " + ball1.getVelocity().angle() + "\n" +
-							"Angle after (2): " + ball2.getVelocity().angle() + "\n"
-							);
+
+
+					// 3) handle collision (only x-velocity)
+					handleCollision(newVelocity1, newVelocity2, weight1, weight2);
+
+					// 4) convert the new velocity back to the normal plane system
+					Vector2 tmp = getVectorNewPlane(newVelocity1, -rotation);
+					oldVelocity1.x = tmp.x;
+					oldVelocity1.y = tmp.y;
+					tmp = getVectorNewPlane(newVelocity2, -rotation);
+					oldVelocity2.x = tmp.x;
+					oldVelocity2.y = tmp.y;
+
+					// 5) update balls position
+					float collision = (ball1.getRadius() + ball2.getRadius() - ball1.getPosition().dst(ball2.getPosition()) + 0.0001f) / 2;
+					ball1.getPosition().add(collision * (float)Math.cos(rotation), collision * (float)Math.sin(rotation));
+					ball2.getPosition().add(-collision * (float)Math.cos(rotation), -collision * (float)Math.sin(rotation));
 				}
 				checkedBalls.put(ball2, ball1);
 			}
@@ -107,6 +126,31 @@ public class Model {
 				ball.getVelocity().y = -ball.getVelocity().y;
 			}
 		}
+	}
+
+	public Vector2 getVectorNewPlane(Vector2 velocity, double rotation) {
+		double alfa = Math.PI/2 - rotation;
+		double beta = - rotation;
+		Vector2 newVelocity = new Vector2();
+		newVelocity.x = (float) (velocity.y * Math.cos(alfa) + velocity.x * Math.cos(beta));
+		newVelocity.y = (float) (velocity.y * Math.sin(alfa) + velocity.x * Math.sin(beta));
+		return newVelocity;
+	}
+
+
+	public void handleCollision(Vector2 v1, Vector2 v2, float weight1, float weight2) {
+		/*
+		 * v1 = ( (m1 - m2)*u1 + 2*m2*u2 ) / (m1 + m2)
+		 * v2 = ( (m2 - m1)*u2 + 2*m1*u1 ) / (m1 + m2)
+		 */
+		float momentum = v1.x*weight1 + v2.x*weight2;
+		float kinetic = v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2;
+		Vector2 tmp = new Vector2();
+		tmp.x = ((weight1 - weight2)*v1.x + 2*weight2*v2.x) / (weight1 + weight2);
+		v2.x = ((weight2 - weight1)*v2.x + 2*weight1*v1.x) / (weight1 + weight2);
+		v1.x = tmp.x;
+		System.out.println("Momentum: " + momentum + " vs " + (v1.x*weight1 + v2.x*weight2));
+		System.out.println("Kinetic: " + kinetic + " vs " + (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2));
 	}
 
 	public Collection<Ball> getBalls() {

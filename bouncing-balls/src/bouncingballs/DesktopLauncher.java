@@ -8,10 +8,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Bouncing Balls";
 		cfg.useGL20 = false;
-		cfg.width = Constants.WIDTH + 40;
-		cfg.height = Constants.HEIGHT + 40;
-//		cfg.width = Constants.WIDTH/5;
-//		cfg.height = Constants.HEIGHT/5;
+		cfg.width = Constants.WIDTH;
+		cfg.height = Constants.HEIGHT;
 		
 		new LwjglApplication(new Simulator(), cfg);
 	}

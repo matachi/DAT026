@@ -29,23 +29,16 @@ public class Simulator implements ApplicationListener, InputProcessor {
 	@Override
 	public void render() {
 		// Clear screen
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		// Update the model
 		model.update(0.015f);
 		
-		// Draw borders
+		// Draw background for the ball area
 		shapeRenderer.begin(ShapeType.FilledRectangle);
-		shapeRenderer.setColor(Color.BLACK);
-		// Left border
-		shapeRenderer.filledRect(-Constants.WIDTH / 2 - 20, -Constants.HEIGHT / 2 - 20, 20, Constants.HEIGHT + 40);
-		// Top border
-		shapeRenderer.filledRect(-Constants.WIDTH / 2 - 20, Constants.HEIGHT / 2, Constants.WIDTH + 40, 20);
-		// Right border
-		shapeRenderer.filledRect(Constants.WIDTH / 2, -Constants.HEIGHT / 2 - 20, 20, Constants.HEIGHT + 40);
-		// Bottom border
-		shapeRenderer.filledRect(-Constants.WIDTH / 2 - 20, -Constants.HEIGHT / 2 - 20, Constants.WIDTH + 40, 20);
+		shapeRenderer.setColor(Color.WHITE);
+		shapeRenderer.filledRect(-Constants.WIDTH / 2, -Constants.HEIGHT / 2, Constants.WIDTH, Constants.HEIGHT);
 		shapeRenderer.end();
 		
 		// Draw balls
@@ -60,8 +53,15 @@ public class Simulator implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		camera.viewportWidth = (width > Constants.WIDTH) ? width : Constants.WIDTH;
-		camera.viewportHeight = (height > Constants.HEIGHT) ? height : Constants.HEIGHT;
+		float aspectRatio = width / (float)height;
+		// If the window is wider than the model
+		if (aspectRatio > Constants.ASPECT_RATIO) {
+			camera.viewportHeight = Constants.HEIGHT;
+			camera.viewportWidth = Constants.WIDTH * (aspectRatio / Constants.ASPECT_RATIO);
+		} else {
+			camera.viewportHeight = Constants.HEIGHT * (Constants.ASPECT_RATIO / aspectRatio);
+			camera.viewportWidth = Constants.WIDTH;
+		}
 		camera.update();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 	}

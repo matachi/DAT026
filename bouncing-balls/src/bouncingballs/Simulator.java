@@ -123,6 +123,7 @@ public class Simulator implements ApplicationListener, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		model.clickRegistered(screenX - Constants.WIDTH / 2 , Constants.HEIGHT / 2 - screenY);
 		return false;
 	}
 }

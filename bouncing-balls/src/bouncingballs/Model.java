@@ -13,7 +13,7 @@ public class Model {
 
 	/** Constructs a model with initial 3 balls. */
 	public Model() {
-		balls = new Ball[3];
+		balls = new Ball[6];
 		
 		//add a big, heavy ball with initial 0 velocity
 		Ball ball = new Ball(0, 0, 100, 70);
@@ -28,6 +28,21 @@ public class Model {
 		ball = new Ball(-250, 120, 100, 70);
 		ball.setVelocity(new Vector2(-500, 10));
 		balls[2] = ball;
+		
+		// add a smaller, lighter ball with a medium velocity
+		ball = new Ball(-200, -200, 50, 20);
+		ball.setVelocity(new Vector2(-200, 10));
+		balls[3] = ball;
+
+		// add a smaller, lighter ball with a medium velocity
+		ball = new Ball(-300, 0, 25, 100);
+		ball.setVelocity(new Vector2(50, 200));
+		balls[4] = ball;
+
+		// add a smaller, lighter ball with a medium velocity
+		ball = new Ball(-130, 120, 10, 5);
+		ball.setVelocity(new Vector2(30, 170));
+		balls[5] = ball;
 	}
 
 	/** Game loop */
@@ -141,7 +156,7 @@ public class Model {
 	 * @param ball The ball to reduce the velocity of.
 	 */
 	public void reduceVelocity(Ball ball) {
-		ball.getVelocity().mul(0.95f);
+		ball.getVelocity().mul(0.98f);
 	}
 
 	/**
@@ -183,5 +198,27 @@ public class Model {
 
 	public Ball[] getBalls() {
 		return balls;
+	}
+	
+	/**
+	 * Checks if a click occured on a ball, and if it did, gives the ball
+	 * some extra velocity.
+	 * @param x the x-coord of the click.
+	 * @param y the y-coord of the click.
+	 */
+	public void clickRegistered(int x, int y) {
+		for (int i = 0; i < balls.length; i++) {
+			if (balls[i] == null)	continue;
+			//check if click occured on a ball
+			if (balls[i].getPosition().dst(x, y) < balls[i].getRadius()) {
+				int speedMultiplier = 10;
+				// add speed towards the click. The longer the click from the balls
+				// center, the larger the gain.
+				float incX = (x - balls[i].getPosition().x) * speedMultiplier;
+				float incY = (y - balls[i].getPosition().y) * speedMultiplier;
+				balls[i].getVelocity().add(incX, incY);
+				return; //can't click on more than one ball
+			}
+		}
 	}
 }

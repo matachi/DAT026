@@ -13,18 +13,24 @@ public class Model {
 
 	public Model() {
 		balls = new HashSet<Ball>();
+		
+		//add a big, heavy ball with initial 0 velocity
 		Ball ball = new Ball(0, 0, 100, 70);
 		balls.add(ball);
+		
+		//add a smaller, lighter ball with a high initial velocity
 		ball = new Ball(250, 120, 50, 20);
 		ball.setVelocity(new Vector2(-500, 10));
 		balls.add(ball);
+		
+		//add a big, heavy ball with a high initial velocity
 		ball = new Ball(-250, 120, 100, 70);
 		ball.setVelocity(new Vector2(-500, 10));
 		balls.add(ball);
 	}
 
 	public void update(float delta) {
-		// Update all balls positions
+		// Update all balls positions, according to gravity and velocity
 		for (Ball ball : balls) {
 			ball.getVelocity().y -= Constants.GRAVITY * delta;
 			ball.getPosition().x += ball.getVelocity().x * delta;
@@ -98,6 +104,9 @@ public class Model {
 					float collision = (ball1.getRadius() + ball2.getRadius() - ball1.getPosition().dst(ball2.getPosition()) + 0.0001f) / 2;
 					ball1.getPosition().add(collision * (float)Math.cos(rotation), collision * (float)Math.sin(rotation));
 					ball2.getPosition().add(-collision * (float)Math.cos(rotation), -collision * (float)Math.sin(rotation));
+					
+					reduceVelocity(ball1);
+					reduceVelocity(ball2);
 				}
 				checkedBalls.put(ball2, ball1);
 			}
@@ -109,28 +118,53 @@ public class Model {
 			if (ball.getPosition().x + radius > Constants.WIDTH / 2) {
 				ball.getPosition().x = Constants.WIDTH / 2 - radius;
 				ball.getVelocity().x = -ball.getVelocity().x;
+				reduceVelocity(ball);
 			}
 			// Left border
 			if (ball.getPosition().x - radius < -Constants.WIDTH / 2) {
 				ball.getPosition().x = -Constants.WIDTH / 2 + radius;
 				ball.getVelocity().x = -ball.getVelocity().x;
+				reduceVelocity(ball);
 			}
 			// Top border
 			if (ball.getPosition().y + radius > Constants.HEIGHT / 2) {
 				ball.getPosition().y = Constants.HEIGHT / 2 - radius;
 				ball.getVelocity().y = -ball.getVelocity().y;
+				reduceVelocity(ball);
 			}
 			// Bottom border
 			if (ball.getPosition().y - radius < -Constants.HEIGHT / 2) {
 				ball.getPosition().y = -Constants.HEIGHT / 2 + radius;
 				ball.getVelocity().y = -ball.getVelocity().y;
+				reduceVelocity(ball);
 			}
 		}
 	}
+	
+	/**
+	 * Reduces the velocity of a <code>Ball</code> with a certain percentage.
+	 * This method can be called to simulate energy loss at collisions.
+	 * @param ball The ball to reduce the velocity of.
+	 */
+	public void reduceVelocity(Ball ball) {
+		ball.getVelocity().mul(0.95f);
+	}
 
+	/**
+	 * Converts a velocity vector to a new plane, which is rotated <code>rotation</code>
+	 * radians from the velocity vectors initial plane.
+	 * @param velocity The vector to convert to the new plane.
+	 * @param rotation The new planes relative rotation to the former plane.
+	 * @return A velocity vector that represents the given parameter velocity in
+	 * a rotated plane.
+	 */
 	public Vector2 getVectorNewPlane(Vector2 velocity, double rotation) {
+		//alfa = the x-vectors angle towards the new plane
+		//beta = the y-vectors angle towards the new plane
 		double alfa = Math.PI/2 - rotation;
 		double beta = - rotation;
+		
+		//the x- and y-vectors for the new plane
 		Vector2 newVelocity = new Vector2();
 		newVelocity.x = (float) (velocity.y * Math.cos(alfa) + velocity.x * Math.cos(beta));
 		newVelocity.y = (float) (velocity.y * Math.sin(alfa) + velocity.x * Math.sin(beta));

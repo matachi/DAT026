@@ -47,6 +47,7 @@ public class Simulator implements ApplicationListener, InputProcessor {
 		// Draw balls
 		shapeRenderer.begin(ShapeType.FilledCircle);
 		for (Ball ball : model.getBalls()) {
+			if (ball == null) continue;
 			shapeRenderer.setColor(ball.getColor());
 			Vector2 position = ball.getPosition();
 			shapeRenderer.filledCircle(position.x, position.y, ball.getRadius());

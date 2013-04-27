@@ -9,48 +9,44 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Model {
 
-	private Collection<Ball> balls;
+	private Ball[] balls;
 
+	/** Constructs a model with initial 3 balls. */
 	public Model() {
-		balls = new HashSet<Ball>();
+		balls = new Ball[3];
 		
 		//add a big, heavy ball with initial 0 velocity
 		Ball ball = new Ball(0, 0, 100, 70);
-		balls.add(ball);
+		balls[0] = ball;
 		
 		//add a smaller, lighter ball with a high initial velocity
 		ball = new Ball(250, 120, 50, 20);
 		ball.setVelocity(new Vector2(-500, 10));
-		balls.add(ball);
+		balls[1] = ball;
 		
 		//add a big, heavy ball with a high initial velocity
 		ball = new Ball(-250, 120, 100, 70);
 		ball.setVelocity(new Vector2(-500, 10));
-		balls.add(ball);
+		balls[2] = ball;
 	}
 
+	/** Game loop */
 	public void update(float delta) {
 		// Update all balls positions, according to gravity and velocity
-		for (Ball ball : balls) {
-			ball.getVelocity().y -= Constants.GRAVITY * delta;
-			ball.getPosition().x += ball.getVelocity().x * delta;
-			ball.getPosition().y += ball.getVelocity().y * delta;
+		for (int index = 0; index < balls.length; index++) {
+			if (balls[index] == null)	continue;
+			balls[index].getVelocity().y -= Constants.GRAVITY * delta;
+			balls[index].getPosition().x += balls[index].getVelocity().x * delta;
+			balls[index].getPosition().y += balls[index].getVelocity().y * delta;
 		}
 
-		// Keep track of which balls collision have already been checked between
-		Map<Ball, Ball> checkedBalls = new HashMap<Ball, Ball>();
 		// Solve all collisions between balls
-		for (Ball ball1 : balls) {
+		for (int i = 0; i < balls.length; i++) {
+			if (balls[i] == null)	continue;
 			// Check if the current ball collides with any other balls
-			for (Ball ball2 : balls) {
-				if (ball2 == ball1) {
-					// Trying to calculate collision with itself
-					continue;
-				} else if (checkedBalls.get(ball1) == ball2) {
-					// Already have checked collision between these two balls
-					continue;
-				}
-				if (ball1.collidesWith(ball2)) {
+			for (int j = i+1; j < balls.length; j++) {
+				if (balls[j] == null)	continue;
+				if (balls[i].collidesWith(balls[j])) {
 					// http://www.cse.chalmers.se/edu/year/2010/course/DAT026/CourseMaterial/lecture5.txt
 					/*
 					 * 1) calculate the degree of the plane
@@ -60,33 +56,30 @@ public class Model {
 					 * 5) update balls position and velocity
 					 */
 
-					// 1)
-					System.out.println(
-							"Angle before (1): " + ball1.getVelocity().angle() + "\n" +
-									"Angle before (2): " + ball2.getVelocity().angle()
-							);
-					Vector2 position1 = ball1.getPosition();
-					Vector2 position2 = ball2.getPosition();
+					// 1) calculate the degree of the plane
+					Vector2 position1 = balls[i].getPosition();
+					Vector2 position2 = balls[j].getPosition();
 					// rotation = how much the new x axis is rotated from the normal x axis
 					double rotation = Math.atan((position1.y - position2.y) / (position1.x - position2.x));
 					if (position2.x > position1.x) {
 						rotation = Math.PI + rotation;
 					}
-					// 2)
+					
+					// 2) convert the balls velocity to the new plane
 					/* 
-					 * alfa = 90 - rotation
-					 * beta = -rotation
-					 * newX = oldY*cos(alfa)+oldX*cos(beta)
-					 * newY = oldY*sin(alfa)+oldX*sin(beta)
+					 * alfa = 90 - rotation		(the x-vectors angle towards the new plane)
+					 * beta = -rotation			(the y-vectors angle towards the new plane)
+					 * newX = oldY*cos(alfa)+oldX*cos(beta)		(the new planes x-vector)
+					 * newY = oldY*sin(alfa)+oldX*sin(beta)		(the new planes y-vector)
 					 */
 
-					Vector2 oldVelocity1 = ball1.getVelocity();
-					Vector2 oldVelocity2 = ball2.getVelocity();
+					Vector2 oldVelocity1 = balls[i].getVelocity();
+					Vector2 oldVelocity2 = balls[j].getVelocity();
 					Vector2 newVelocity1 = getVectorNewPlane(oldVelocity1, rotation);
 					Vector2 newVelocity2 = getVectorNewPlane(oldVelocity2, rotation);
 
-					float weight1 = ball1.getWeight();
-					float weight2 = ball2.getWeight();
+					float weight1 = balls[i].getWeight();
+					float weight2 = balls[j].getWeight();
 
 
 					// 3) handle collision (only x-velocity)
@@ -101,42 +94,43 @@ public class Model {
 					oldVelocity2.y = tmp.y;
 
 					// 5) update balls position
-					float collision = (ball1.getRadius() + ball2.getRadius() - ball1.getPosition().dst(ball2.getPosition()) + 0.0001f) / 2;
-					ball1.getPosition().add(collision * (float)Math.cos(rotation), collision * (float)Math.sin(rotation));
-					ball2.getPosition().add(-collision * (float)Math.cos(rotation), -collision * (float)Math.sin(rotation));
+					float collision = (balls[i].getRadius() + balls[j].getRadius() - balls[i].getPosition().dst(balls[j].getPosition()) + 0.0001f) / 2;
+					balls[i].getPosition().add(collision * (float)Math.cos(rotation), collision * (float)Math.sin(rotation));
+					balls[j].getPosition().add(-collision * (float)Math.cos(rotation), -collision * (float)Math.sin(rotation));
 					
-					reduceVelocity(ball1);
-					reduceVelocity(ball2);
+					// optional: add some energy loss to the balls
+					reduceVelocity(balls[i]);
+					reduceVelocity(balls[j]);
 				}
-				checkedBalls.put(ball2, ball1);
 			}
 		}
 		// Make sure no ball is leaving the field
-		for (Ball ball : balls) {
-			float radius = ball.getRadius();
+		for (int k = 0; k < balls.length; k++) {
+			if (balls[k] == null)	continue;
+			float radius = balls[k].getRadius();
 			// Right border
-			if (ball.getPosition().x + radius > Constants.WIDTH / 2) {
-				ball.getPosition().x = Constants.WIDTH / 2 - radius;
-				ball.getVelocity().x = -ball.getVelocity().x;
-				reduceVelocity(ball);
+			if (balls[k].getPosition().x + radius > Constants.WIDTH / 2) {
+				balls[k].getPosition().x = Constants.WIDTH / 2 - radius;
+				balls[k].getVelocity().x = -balls[k].getVelocity().x;
+				reduceVelocity(balls[k]);
 			}
 			// Left border
-			if (ball.getPosition().x - radius < -Constants.WIDTH / 2) {
-				ball.getPosition().x = -Constants.WIDTH / 2 + radius;
-				ball.getVelocity().x = -ball.getVelocity().x;
-				reduceVelocity(ball);
+			if (balls[k].getPosition().x - radius < -Constants.WIDTH / 2) {
+				balls[k].getPosition().x = -Constants.WIDTH / 2 + radius;
+				balls[k].getVelocity().x = -balls[k].getVelocity().x;
+				reduceVelocity(balls[k]);
 			}
 			// Top border
-			if (ball.getPosition().y + radius > Constants.HEIGHT / 2) {
-				ball.getPosition().y = Constants.HEIGHT / 2 - radius;
-				ball.getVelocity().y = -ball.getVelocity().y;
-				reduceVelocity(ball);
+			if (balls[k].getPosition().y + radius > Constants.HEIGHT / 2) {
+				balls[k].getPosition().y = Constants.HEIGHT / 2 - radius;
+				balls[k].getVelocity().y = -balls[k].getVelocity().y;
+				reduceVelocity(balls[k]);
 			}
 			// Bottom border
-			if (ball.getPosition().y - radius < -Constants.HEIGHT / 2) {
-				ball.getPosition().y = -Constants.HEIGHT / 2 + radius;
-				ball.getVelocity().y = -ball.getVelocity().y;
-				reduceVelocity(ball);
+			if (balls[k].getPosition().y - radius < -Constants.HEIGHT / 2) {
+				balls[k].getPosition().y = -Constants.HEIGHT / 2 + radius;
+				balls[k].getVelocity().y = -balls[k].getVelocity().y;
+				reduceVelocity(balls[k]);
 			}
 		}
 	}
@@ -187,7 +181,7 @@ public class Model {
 		System.out.println("Kinetic: " + kinetic + " vs " + (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2));
 	}
 
-	public Collection<Ball> getBalls() {
+	public Ball[] getBalls() {
 		return balls;
 	}
 }

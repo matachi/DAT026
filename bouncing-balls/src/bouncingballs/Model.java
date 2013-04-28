@@ -22,25 +22,25 @@ public class Model {
 		ball.setVelocity(new Vector2(-500, 10));
 		balls.add(ball);
 		
-		//add a big, heavy ball with a high initial velocity
-		ball = new Ball(-250, 120, 100, 70);
-		ball.setVelocity(new Vector2(-500, 10));
-		balls.add(ball);
-		
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-200, -200, 50, 20);
-		ball.setVelocity(new Vector2(-200, 10));
-		balls.add(ball);
-
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-300, 0, 25, 100);
-		ball.setVelocity(new Vector2(50, 200));
-		balls.add(ball);
-
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-130, 120, 10, 5);
-		ball.setVelocity(new Vector2(30, 170));
-		balls.add(ball);
+//		//add a big, heavy ball with a high initial velocity
+//		ball = new Ball(-250, 120, 100, 70);
+//		ball.setVelocity(new Vector2(-500, 10));
+//		balls.add(ball);
+//		
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-200, -200, 50, 20);
+//		ball.setVelocity(new Vector2(-200, 10));
+//		balls.add(ball);
+//
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-300, 0, 25, 100);
+//		ball.setVelocity(new Vector2(50, 200));
+//		balls.add(ball);
+//
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-130, 120, 10, 5);
+//		ball.setVelocity(new Vector2(30, 170));
+//		balls.add(ball);
 	}
 
 	/** Game loop */

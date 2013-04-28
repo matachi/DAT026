@@ -22,25 +22,25 @@ public class Model {
 		ball.setVelocity(new Vector2(-500, 10));
 		balls.add(ball);
 		
-		//add a big, heavy ball with a high initial velocity
-		ball = new Ball(-250, 120, 100, 70);
-		ball.setVelocity(new Vector2(-500, 10));
-		balls.add(ball);
-		
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-200, -200, 50, 20);
-		ball.setVelocity(new Vector2(-200, 10));
-		balls.add(ball);
-
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-300, 0, 25, 100);
-		ball.setVelocity(new Vector2(50, 200));
-		balls.add(ball);
-
-		// add a smaller, lighter ball with a medium velocity
-		ball = new Ball(-130, 120, 10, 5);
-		ball.setVelocity(new Vector2(30, 170));
-		balls.add(ball);
+//		//add a big, heavy ball with a high initial velocity
+//		ball = new Ball(-250, 120, 100, 70);
+//		ball.setVelocity(new Vector2(-500, 10));
+//		balls.add(ball);
+//		
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-200, -200, 50, 20);
+//		ball.setVelocity(new Vector2(-200, 10));
+//		balls.add(ball);
+//
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-300, 0, 25, 100);
+//		ball.setVelocity(new Vector2(50, 200));
+//		balls.add(ball);
+//
+//		// add a smaller, lighter ball with a medium velocity
+//		ball = new Ball(-130, 120, 10, 5);
+//		ball.setVelocity(new Vector2(30, 170));
+//		balls.add(ball);
 	}
 
 	/** Game loop */
@@ -177,6 +177,18 @@ public class Model {
 	}
 
 
+	/**
+	 * Updates the given velocities, with their respective values after a collision.
+	 * The collision is required to be along the x-axis. 
+	 * See {@link #getVectorNewPlane(Vector2, double)} for more information.
+	 * The collision occurs with regards to conservation of momentum
+	 * and conservation of kinetic energy (elastic collision).
+	 * 
+	 * @param v1 the velocity of entity 1
+	 * @param v2 the velocity of entity 2
+	 * @param weight1 the weight of entity 1
+	 * @param weight2 the weight of entity 2
+	 */
 	public void handleCollision(Vector2 v1, Vector2 v2, float weight1, float weight2) {
 		/*
 		 * v1 = ( (m1 - m2)*u1 + 2*m2*u2 ) / (m1 + m2)
@@ -188,8 +200,16 @@ public class Model {
 		tmp.x = ((weight1 - weight2)*v1.x + 2*weight2*v2.x) / (weight1 + weight2);
 		v2.x = ((weight2 - weight1)*v2.x + 2*weight1*v1.x) / (weight1 + weight2);
 		v1.x = tmp.x;
-		System.out.println("Momentum: " + momentum + " vs " + (v1.x*weight1 + v2.x*weight2));
-		System.out.println("Kinetic: " + kinetic + " vs " + (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2));
+		if (Math.abs(momentum - (v1.x*weight1 + v2.x*weight2)) > 0.1 || 
+				Math.abs(kinetic - (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2)) > 0.5) {
+			System.out.println("OMG! We are so fricking awesome!\n" +
+				"WE JUST BROKE THE LAWS OF TERMODYNAMICS!");
+			System.out.println("Momentum: " + momentum + " vs " + (v1.x*weight1 + v2.x*weight2));
+			System.out.println("Kinetic: " + kinetic + " vs " + 
+					(v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2) + "\n");
+		}
+		
+		
 	}
 
 	public List<Ball> getBalls() {

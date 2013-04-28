@@ -177,6 +177,18 @@ public class Model {
 	}
 
 
+	/**
+	 * Updates the given velocities, with their respective values after a collision.
+	 * The collision is required to be along the x-axis. 
+	 * See {@link #getVectorNewPlane(Vector2, double)} for more information.
+	 * The collision occurs with regards to conservation of momentum
+	 * and conservation of kinetic energy (elastic collision).
+	 * 
+	 * @param v1 the velocity of entity 1
+	 * @param v2 the velocity of entity 2
+	 * @param weight1 the weight of entity 1
+	 * @param weight2 the weight of entity 2
+	 */
 	public void handleCollision(Vector2 v1, Vector2 v2, float weight1, float weight2) {
 		/*
 		 * v1 = ( (m1 - m2)*u1 + 2*m2*u2 ) / (m1 + m2)

@@ -200,8 +200,16 @@ public class Model {
 		tmp.x = ((weight1 - weight2)*v1.x + 2*weight2*v2.x) / (weight1 + weight2);
 		v2.x = ((weight2 - weight1)*v2.x + 2*weight1*v1.x) / (weight1 + weight2);
 		v1.x = tmp.x;
-		System.out.println("Momentum: " + momentum + " vs " + (v1.x*weight1 + v2.x*weight2));
-		System.out.println("Kinetic: " + kinetic + " vs " + (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2));
+		if (Math.abs(momentum - (v1.x*weight1 + v2.x*weight2)) > 0.1 || 
+				Math.abs(kinetic - (v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2)) > 0.5) {
+			System.out.println("OMG! We are so fricking awesome!\n" +
+				"WE JUST BROKE THE LAWS OF TERMODYNAMICS!");
+			System.out.println("Momentum: " + momentum + " vs " + (v1.x*weight1 + v2.x*weight2));
+			System.out.println("Kinetic: " + kinetic + " vs " + 
+					(v1.x*v1.x*weight1/2 + v2.x*v2.x*weight2/2) + "\n");
+		}
+		
+		
 	}
 
 	public List<Ball> getBalls() {

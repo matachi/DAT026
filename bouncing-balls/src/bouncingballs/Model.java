@@ -202,7 +202,7 @@ public class Model {
 	 * @param x the x-coord of the click.
 	 * @param y the y-coord of the click.
 	 */
-	public void clickRegistered(int x, int y) {
+	public void clickRegistered(float x, float y) {
 		for (Ball ball : balls) {
 			//check if click occured on a ball
 			if (ball.getPosition().dst(x, y) < ball.getRadius()) {

@@ -122,7 +122,16 @@ public class Simulator implements ApplicationListener, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		model.clickRegistered(screenX - Constants.WIDTH / 2 , Constants.HEIGHT / 2 - screenY);
+		// screenX and screenY have (0, 0) in the upper left corner, while in 
+		// the model (0, 0) is in the center. xPos and yPos deals with changing
+		// the coordinates to the model's.
+		// xScale and yScale deal with the scaling of the coordinates when the
+		// window is resized.
+		float xScale = camera.viewportWidth / (float)Gdx.graphics.getWidth();
+		float xPos = screenX - Gdx.graphics.getWidth() / 2;
+		float yScale = camera.viewportHeight / (float)Gdx.graphics.getHeight();
+		float yPos = Constants.HEIGHT / 2 - screenY;
+		model.clickRegistered(xScale * xPos, yScale * yPos);
 		return false;
 	}
 }

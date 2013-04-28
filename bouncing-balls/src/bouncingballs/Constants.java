@@ -1,5 +1,12 @@
 package bouncingballs;
 
+/**
+ * 
+ * @author Daniel Jonsson
+ * @author Florian Minges
+ * @group 0
+ *
+ */
 public class Constants {
 
 	public static final int WIDTH = 960;

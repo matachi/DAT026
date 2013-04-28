@@ -5,6 +5,13 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * 
+ * @author Daniel Jonsson
+ * @author Florian Minges
+ * @group 0
+ *
+ */
 public class Model {
 
 	private List<Ball> balls;

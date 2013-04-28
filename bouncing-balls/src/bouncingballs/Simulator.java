@@ -11,6 +11,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * 
+ * @author Daniel Jonsson
+ * @author Florian Minges
+ * @group 0
+ *
+ */
 public class Simulator implements ApplicationListener, InputProcessor {
 	
 	private Model model;

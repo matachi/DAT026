@@ -3,6 +3,13 @@ package bouncingballs;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * 
+ * @author Daniel Jonsson
+ * @author Florian Minges
+ * @group 0
+ *
+ */
 public class Ball {
 	
 	private float weight;
